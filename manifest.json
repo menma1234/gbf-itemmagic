@@ -1,0 +1,21 @@
+{
+	"name": "GBF Autoseller",
+	"version": "1.0.0",
+	"minimum_chrome_version": "18.0",
+	"manifest_version": 2,
+	"description": "Provides a button to sell weapons and summons in one click in Granblue Fantasy.",
+	"devtools_page": "src/devtools/devtools.html",
+	"background": {
+		"scripts": ["src/bg/background.js"],
+		"persistent": false
+	},
+	"content_scripts": [
+		{
+			"matches": ["http://gbf.game.mbga.jp/*"],
+			"js": ["src/content/content.js"]
+		}
+	],
+	"permissions": [
+		"http://gbf.game.mbga.jp/*"
+	]
+}

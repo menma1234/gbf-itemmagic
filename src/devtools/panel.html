@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+	<head>
+		<script src="panel.js"></script>
+		
+		<style>
+			input[type = "checkbox"],
+			span {
+				vertical-align: middle;
+			}
+		</style>
+	</head>
+	<body>
+		<div id = "wait">Please open the game first.</div>
+		<div id = "options" style = "display:none;">
+			<span>Include all up to rarity:</span>
+			<select id = "rarity">
+				<option value = "1" selected>N</option>
+				<option value = "2">R</option>
+				<option value = "3">SR</option>
+				<option value = "4">SSR</option>
+			</select>
+			
+			<label style = "margin-left:10px;">
+				<input type = "checkbox" id = "angels" />
+				<span>Include angels</span>
+			</label>
+			
+			<br />
+			<br />
+			
+			<button id = "weapons">Sell Weapons</button>
+			<button id = "summons">Sell Summons</button>
+		</div>
+	</body>
+</html>
