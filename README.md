@@ -15,8 +15,8 @@ Open Developer Tools, switch to the GBF Autosell panel, and open it game. This i
 ## How to Play with Developer Tools
 
 1. Open Chrome and press F12 on your keyboard. Alternatively, open the Chrome menu and go to More tools -> Developer tools. This will open a new section.
-2. In the new section that's opened, click the icon immediately to the right of the magnifying glass in the top left.
-3. Click the icon immediately to the left of the gear icon in the top right. A new section will open at the bottom.
+2. In the new section that's opened, click the smartphone icon in the top left.
+3. Click the three dots immediately to the left of the X in the top right and select "Show console". A new section will open at the bottom.
 4. Select the emulation tab and select a mobile device in the model dropdown (preferably Google Nexus 4 or similar).
 5. Uncheck emulate screen resolution.
 6. Navigate to http://gbf.game.mbga.jp/ in this tab. Resize the window as needed as the contents will fill the window.
