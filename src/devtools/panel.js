@@ -4,6 +4,7 @@ var uid = null;
 function addClickHandlers() {
 	document.getElementById("weapons").addEventListener("click", function() {
 			chrome.runtime.sendMessage({
+				action: "sell",
 				summons: false,
 				rarity: document.getElementById("rarity").selectedIndex + 1,
 				angels: document.getElementById("angels").checked,
@@ -13,9 +14,19 @@ function addClickHandlers() {
 		});
 	document.getElementById("summons").addEventListener("click", function() {
 			chrome.runtime.sendMessage({
+				action: "sell",
 				summons: true,
 				rarity: document.getElementById("rarity").selectedIndex + 1,
 				angels: document.getElementById("angels").checked,
+				uid: uid,
+				tabId: chrome.devtools.inspectedWindow.tabId
+			});
+		});
+	
+	document.getElementById("gacha").addEventListener("click", function() {
+			chrome.runtime.sendMessage({
+				action: "gacha",
+				empty: document.getElementById("empty").checked,
 				uid: uid,
 				tabId: chrome.devtools.inspectedWindow.tabId
 			});
