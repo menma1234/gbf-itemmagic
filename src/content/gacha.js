@@ -135,10 +135,14 @@ function result2(uid, eventName, eventId, empty, seq, doc) {
 	
 	req.onload = function() {
 			var response = JSON.parse(req.responseText);
-			if(!empty && response.index.ssr !== null) {
-				var tickets = document.getElementsByClassName("txt-gacha-point")[0].innerHTML;
+			if(!empty) {
+				for(var i = 0; i < response.result.length; i++) {
+					if(response.result[i].reward_rare_val == 4) {
+						var tickets = document.getElementsByClassName("txt-gacha-point")[0].innerHTML;
 				
-				alert("SSR pulled. You have " + tickets + " tickets remaining.");
+						alert("SSR pulled. You have " + tickets + " tickets remaining.");
+					}
+				}
 			} else {
 				setTimeout(function() {
 						gacha(uid, eventName, empty, doc);
