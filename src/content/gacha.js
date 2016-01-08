@@ -52,7 +52,7 @@ function gacha(uid, eventName, empty, doc) {
 	if(single.getAttribute("disable") === "true") {
 		var tickets = doc.getElementsByClassName("txt-gacha-point")[0].innerHTML;
 		
-		if(tickets > 0) {
+		if(tickets > 1) {
 			alert("Box emptied. You have " + tickets + " tickets remaining.");
 		} else {
 			alert("Out of tickets.");
@@ -141,13 +141,14 @@ function result2(uid, eventName, eventId, empty, seq, doc) {
 						var tickets = document.getElementsByClassName("txt-gacha-point")[0].innerHTML;
 				
 						alert("SSR pulled. You have " + tickets + " tickets remaining.");
+						return;
 					}
 				}
-			} else {
-				setTimeout(function() {
-						gacha(uid, eventName, empty, doc);
-					}, 200);
 			}
+			
+			setTimeout(function() {
+					gacha(uid, eventName, empty, doc);
+				}, 200);
 		};
 	
 	req.send();
