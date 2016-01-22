@@ -16,16 +16,22 @@ chrome.runtime.onMessage.addListener(
 		
 		var gachaButtons = document.getElementsByClassName("btn-medal");
 		if(gachaButtons.length === 0) {
-			alert("Please navigate to the event page first.");
+			alert("Please navigate to the gacha page first.");
 			return;
 		}
 		
 		var single = gachaButtons[gachaButtons.length - 1];
 		
 		if(single.getAttribute("disable") === "true") {
-			var tickets = document.getElementsByClassName("txt-gacha-point")[0].innerHTML;
+			var tickets;
+			
+			if(document.getElementsByClassName("txt-gacha-point").length > 0) {
+				tickets = document.getElementsByClassName("txt-gacha-point")[0].innerHTML;
+			} else {
+				tickets = document.getElementsByClassName("txt-medal-possessed")[0].innerHTML.replace(/[\D]/g, "");;
+			}
 		
-			if(tickets > 0) {
+			if(tickets > 1) {
 				alert("The box is empty. Please reset the box and try again.");
 			} else {
 				alert("Out of tickets.");
@@ -50,7 +56,13 @@ function gacha(uid, eventName, empty, doc) {
 	}
 	
 	if(single.getAttribute("disable") === "true") {
-		var tickets = doc.getElementsByClassName("txt-gacha-point")[0].innerHTML;
+		var tickets;
+		
+		if(doc.getElementsByClassName("txt-gacha-point").length > 0) {
+			tickets = doc.getElementsByClassName("txt-gacha-point")[0].innerHTML;
+		} else {
+			tickets = doc.getElementsByClassName("txt-medal-possessed")[0].innerHTML.replace(/[\D]/g, "");;
+		}
 		
 		if(tickets > 1) {
 			alert("Box emptied. You have " + tickets + " tickets remaining.");
@@ -138,7 +150,13 @@ function result2(uid, eventName, eventId, empty, seq, doc) {
 			if(!empty) {
 				for(var i = 0; i < response.result.length; i++) {
 					if(response.result[i].reward_rare_val == 4) {
-						var tickets = document.getElementsByClassName("txt-gacha-point")[0].innerHTML;
+						var tickets;
+						
+						if(doc.getElementsByClassName("txt-gacha-point").length > 0) {
+							tickets = doc.getElementsByClassName("txt-gacha-point")[0].innerHTML;
+						} else {
+							tickets = doc.getElementsByClassName("txt-medal-possessed")[0].innerHTML.replace(/[\D]/g, "");;
+						}
 				
 						alert("SSR pulled. You have " + tickets + " tickets remaining.");
 						return;
