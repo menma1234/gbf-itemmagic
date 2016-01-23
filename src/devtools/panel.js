@@ -2,6 +2,10 @@ var uid = null;
 
 // Listen to button presses
 function addClickHandlers() {
+	document.getElementById("setNumTickets").addEventListener("click", function() {
+			document.getElementById("numTickets").disabled = !document.getElementById("setNumTickets").checked;
+		});
+	
 	document.getElementById("weapons").addEventListener("click", function() {
 			chrome.runtime.sendMessage({
 				action: "sell",
@@ -12,6 +16,7 @@ function addClickHandlers() {
 				tabId: chrome.devtools.inspectedWindow.tabId
 			});
 		});
+	
 	document.getElementById("summons").addEventListener("click", function() {
 			chrome.runtime.sendMessage({
 				action: "sell",
@@ -24,10 +29,21 @@ function addClickHandlers() {
 		});
 	
 	document.getElementById("gacha").addEventListener("click", function() {
+			var numTickets = parseInt(document.getElementById("numTickets").value);
+			
+			if(numTickets % 2 === 1) {
+				numTickets--;
+			}
+			
+			if(document.getElementById("numTickets").disabled || isNaN(numTickets) || numTickets < 0) {
+				numTickets = null;
+			}
+			
 			chrome.runtime.sendMessage({
 				action: "gacha",
 				empty: document.getElementById("empty").checked,
 				uid: uid,
+				numTickets: numTickets,
 				tabId: chrome.devtools.inspectedWindow.tabId
 			});
 		});

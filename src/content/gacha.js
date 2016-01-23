@@ -4,7 +4,7 @@ chrome.runtime.onMessage.addListener(
 			return;
 		}
 		
-		if(!("empty" in request) || !("uid" in request)) {
+		if(!("empty" in request) || !("numTickets" in request) || !("uid" in request)) {
 			return;
 		}
 		
@@ -23,13 +23,7 @@ chrome.runtime.onMessage.addListener(
 		var single = gachaButtons[gachaButtons.length - 1];
 		
 		if(single.getAttribute("disable") === "true") {
-			var tickets;
-			
-			if(document.getElementsByClassName("txt-gacha-point").length > 0) {
-				tickets = document.getElementsByClassName("txt-gacha-point")[0].innerHTML;
-			} else {
-				tickets = document.getElementsByClassName("txt-medal-possessed")[0].innerHTML.replace(/[\D]/g, "");;
-			}
+			var tickets = getNumTickets(document);
 		
 			if(tickets > 1) {
 				alert("The box is empty. Please reset the box and try again.");
@@ -40,10 +34,10 @@ chrome.runtime.onMessage.addListener(
 			return;
 		}
 		
-		gacha(request.uid, hash.replace(/^#event\/(.*?)(\/.*?)?$/, "$1"), request.empty, document);
+		gacha(request.uid, hash.replace(/^#event\/(.*?)(\/.*?)?$/, "$1"), request.empty, request.numTickets, document);
 	});
 
-function gacha(uid, eventName, empty, doc) {
+function gacha(uid, eventName, empty, max, doc) {
 	var gachaButtons = doc.getElementsByClassName("btn-medal");
 	var multi, single;
 	
@@ -56,13 +50,7 @@ function gacha(uid, eventName, empty, doc) {
 	}
 	
 	if(single.getAttribute("disable") === "true") {
-		var tickets;
-		
-		if(doc.getElementsByClassName("txt-gacha-point").length > 0) {
-			tickets = doc.getElementsByClassName("txt-gacha-point")[0].innerHTML;
-		} else {
-			tickets = doc.getElementsByClassName("txt-medal-possessed")[0].innerHTML.replace(/[\D]/g, "");;
-		}
+		var tickets = getNumTickets(doc);
 		
 		if(tickets > 1) {
 			alert("Box emptied. You have " + tickets + " tickets remaining.");
@@ -73,9 +61,18 @@ function gacha(uid, eventName, empty, doc) {
 		return;
 	}
 	
-	var id = multi.getAttribute("data-id");
-	var duplicate_key = multi.getAttribute("data-duplicate-key");
-	var count = multi.getAttribute("count");
+	if(max === 0) {
+		alert("Complete. You have " + getNumTickets(doc) + " tickets remaining.");
+		return;
+	}
+	
+	var id = single.getAttribute("data-id");
+	var duplicate_key = single.getAttribute("data-duplicate-key");
+	var count = 1;
+	
+	if(multi !== null && (max === null || max >= 20)) {
+		count = multi.getAttribute("count");
+	}
 	
 	var time = Date.now();
 	var url = "http://gbf.game.mbga.jp/" + eventName + "/gacha/play?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
@@ -84,13 +81,13 @@ function gacha(uid, eventName, empty, doc) {
 	req.open("POST", url);
 	
 	req.onload = function() {
-			contentAction(uid, eventName, id, empty);
+			contentAction(uid, eventName, id, empty, (max === null ? max : (max - count * 2)));
 		};
 	
 	req.send(JSON.stringify({special_token: null, gacha_id: id, count: count, duplicate_key: duplicate_key}));
 }
 
-function contentAction(uid, eventName, eventId, empty) {
+function contentAction(uid, eventName, eventId, empty, max) {
 	var time = Date.now();
 	var url = "http://gbf.game.mbga.jp/" + eventName + "/gacha/content/action/" + eventId + "?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
 	
@@ -98,13 +95,13 @@ function contentAction(uid, eventName, eventId, empty) {
 	req.open("GET", url);
 	
 	req.onload = function() {
-			result1(uid, eventName, eventId, empty, time - 1);
+			result1(uid, eventName, eventId, empty, max, time - 1);
 		};
 	
 	req.send();
 }
 
-function result1(uid, eventName, eventId, empty, seq) {
+function result1(uid, eventName, eventId, empty, max, seq) {
 	seq++;
 	var time = Date.now();
 	var url = "http://gbf.game.mbga.jp/" + eventName + "/gacha/result/" + eventId + "?_=" + seq + "&t=" + time + "&uid=" + uid;
@@ -113,13 +110,13 @@ function result1(uid, eventName, eventId, empty, seq) {
 	req.open("GET", url);
 	
 	req.onload = function() {
-			contentResult(uid, eventName, eventId, empty, seq);
+			contentResult(uid, eventName, eventId, empty, max, seq);
 		};
 	
 	req.send();
 }
 
-function contentResult(uid, eventName, eventId, empty, seq) {
+function contentResult(uid, eventName, eventId, empty, max, seq) {
 	seq++;
 	var time = Date.now();
 	var url = "http://gbf.game.mbga.jp/" + eventName + "/gacha/content/result/" + eventId + "?_=" + seq + "&t=" + time + "&uid=" + uid;
@@ -131,13 +128,13 @@ function contentResult(uid, eventName, eventId, empty, seq) {
 			var docString = decodeURIComponent(JSON.parse(req.responseText).data);
 			var doc = new DOMParser().parseFromString(docString, "text/html");
 			
-			result2(uid, eventName, eventId, empty, seq, doc);
+			result2(uid, eventName, eventId, empty, max, seq, doc);
 		};
 	
 	req.send();
 }
 
-function result2(uid, eventName, eventId, empty, seq, doc) {
+function result2(uid, eventName, eventId, empty, max, seq, doc) {
 	seq++;
 	var time = Date.now();
 	var url = "http://gbf.game.mbga.jp/" + eventName + "/gacha/result/" + eventId + "?_=" + seq + "&t=" + time + "&uid=" + uid;
@@ -150,24 +147,31 @@ function result2(uid, eventName, eventId, empty, seq, doc) {
 			if(!empty) {
 				for(var i = 0; i < response.result.length; i++) {
 					if(response.result[i].reward_rare_val == 4) {
-						var tickets;
-						
-						if(doc.getElementsByClassName("txt-gacha-point").length > 0) {
-							tickets = doc.getElementsByClassName("txt-gacha-point")[0].innerHTML;
-						} else {
-							tickets = doc.getElementsByClassName("txt-medal-possessed")[0].innerHTML.replace(/[\D]/g, "");;
-						}
-				
-						alert("SSR pulled. You have " + tickets + " tickets remaining.");
+						alert("SSR pulled. You have " + getNumTickets(doc) + " tickets remaining.");
 						return;
 					}
 				}
 			}
 			
+			if(max === 0) {
+				var tickets = getNumTickets(doc);
+				
+				alert("Complete. You have " + getNumTickets(doc) + " tickets remaining.");
+				return;
+			}
+			
 			setTimeout(function() {
-					gacha(uid, eventName, empty, doc);
-				}, 200);
+					gacha(uid, eventName, empty, max, doc);
+				}, Math.floor(Math.random() * 501) + 300);
 		};
 	
 	req.send();
+}
+
+function getNumTickets(doc) {
+	if(doc.getElementsByClassName("txt-gacha-point").length > 0) {
+		return doc.getElementsByClassName("txt-gacha-point")[0].innerHTML;
+	} else {
+		return doc.getElementsByClassName("txt-medal-possessed")[0].innerHTML.replace(/[\D]/g, "");;
+	}
 }
