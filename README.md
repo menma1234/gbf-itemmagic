@@ -16,7 +16,7 @@ Open Developer Tools, switch to the GBF Item Magic panel, and open the game. Thi
 
 For selling weapons and summons, select the options and click sell. A dialog box will appear in the browser asking you to confirm.
 
-For pulling from the event gacha, click the corresponding button. You *must* be on the event page in order to use it. If the "Empty current box" checkbox is not selected, the script will stop once the SSR is pulled.
+For pulling from the event gacha, click the corresponding button. You *must* be on the event page (or the gacha page for Guild Wars events) in order to use it. If the "Empty current box" checkbox is not selected, the script will stop once the SSR is pulled.
 
 ## Important Notes
 
