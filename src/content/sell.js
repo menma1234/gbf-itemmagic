@@ -4,6 +4,8 @@ const angelWeaponIds = ["1020099000", "1020199000", "1020299000", "1020399000", 
 	"1030099000", "1030199000", "1030299000", "1030399000", "1030499000", "1030599000", "1030699000", "1030799000", "1030899000", "1030999000"];
 const rarity = ["dummy", "N ", "R ", "SR ", "SSR "];
 
+var minDelay, maxDelay;
+
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if(!("action" in request) || request.action !== "sell") {
@@ -14,7 +16,15 @@ chrome.runtime.onMessage.addListener(
 			return;
 		}
 		
-		sell(request.uid, request.summons, request.rarity, request.angels);
+		chrome.storage.sync.get( {
+				minDelay: 300,
+				maxDelay: 800
+			}, function(items) {
+				minDelay = items.minDelay;
+				maxDelay = items.maxDelay;
+				
+				sell(request.uid, request.summons, request.rarity, request.angels);
+			});
 	});
 
 function sell(uid, summons, rarity, angels) {
@@ -92,7 +102,7 @@ function confirmSell(ids, summons, uid, duplicate_key, count, amount) {
 			
 			setTimeout(function() {
 					doSell(ids, summons, uid, duplicate_key, count, amount);
-				}, 100);
+				}, randomInt(minDelay, maxDelay));
 		};
 	
 	req.onerror = function() {
@@ -118,7 +128,7 @@ function doSell(ids, summons, uid, duplicate_key, count, amount) {
 					ids.splice(0, 20);
 					setTimeout(function() {
 							confirmSell(ids, summons, uid, duplicate_key, count, amount);
-						}, 100);
+						}, randomInt(minDelay, maxDelay));
 				}
 			} else {
 				alert("An error occurred while trying to execute selling.");

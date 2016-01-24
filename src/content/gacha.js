@@ -1,3 +1,5 @@
+var minDelay, maxDelay;
+
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if(!("action" in request) || request.action !== "gacha") {
@@ -34,7 +36,15 @@ chrome.runtime.onMessage.addListener(
 			return;
 		}
 		
-		gacha(request.uid, hash.replace(/^#event\/(.*?)(\/.*?)?$/, "$1"), request.empty, request.numTickets, document);
+		chrome.storage.sync.get( {
+				minDelay: 300,
+				maxDelay: 800
+			}, function(items) {
+				minDelay = items.minDelay;
+				maxDelay = items.maxDelay;
+				
+				gacha(request.uid, hash.replace(/^#event\/(.*?)(\/.*?)?$/, "$1"), request.empty, request.numTickets, document);
+			});
 	});
 
 function gacha(uid, eventName, empty, max, doc) {
@@ -162,7 +172,7 @@ function result2(uid, eventName, eventId, empty, max, seq, doc) {
 			
 			setTimeout(function() {
 					gacha(uid, eventName, empty, max, doc);
-				}, Math.floor(Math.random() * 501) + 300);
+				}, randomInt(minDelay, maxDelay));
 		};
 	
 	req.send();
