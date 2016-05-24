@@ -96,7 +96,7 @@ function gacha(uid, eventName, empty, max, doc) {
 		return;
 	}
 	
-	if(max <= 0) {
+	if(max !== null && max <= 0) {
 		alert("Complete. You have " + getNumTickets(doc) + " tickets remaining.");
 		return;
 	}
