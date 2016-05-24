@@ -6,16 +6,39 @@ const rarity = ["dummy", "N ", "R ", "SR ", "SSR "];
 
 var minDelay, maxDelay;
 
-chrome.runtime.onMessage.addListener(
-	function(request, sender, sendResponse) {
-		if(!("action" in request) || request.action !== "sell") {
-			return;
-		}
-		
-		if(!("summons" in request) || !("rarity" in request) || !("angels" in request) || !("uid" in request)) {
-			return;
-		}
-		
+(function() {
+	var summons, rarity, angels;
+	
+	chrome.runtime.onMessage.addListener(
+		function(request, sender, sendResponse) {
+			if(!("action" in request) || request.action !== "sell") {
+				return;
+			}
+			
+			if(!("summons" in request) || !("rarity" in request) || !("angels" in request)) {
+				return;
+			}
+			
+			window.addEventListener("uid", uidCallback);
+			
+			var script = document.createElement("script");
+			script.textContent = "(" + function() {
+				var event = new CustomEvent("uid", {detail: Game.userId});
+				window.dispatchEvent(event);
+			} + ")();";
+			
+			document.head.appendChild(script);
+			document.head.removeChild(script);
+			
+			summons = request.summons;
+			rarity = request.rarity;
+			angels = request.angels;
+		});
+
+	function uidCallback(e) {
+		var uid = e.detail;
+		window.removeEventListener("uid", uidCallback);
+			
 		chrome.storage.sync.get( {
 				minDelay: 300,
 				maxDelay: 800
@@ -23,9 +46,10 @@ chrome.runtime.onMessage.addListener(
 				minDelay = items.minDelay;
 				maxDelay = items.maxDelay;
 				
-				sell(request.uid, request.summons, request.rarity, request.angels);
+				sell(uid, summons, rarity, angels);
 			});
-	});
+	}
+})();
 
 function sell(uid, summons, rarity, angels) {
 	var time = Date.now();
