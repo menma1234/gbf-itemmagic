@@ -53,7 +53,7 @@ var minDelay, maxDelay;
 
 function sell(uid, summons, rarity, angels) {
 	var time = Date.now();
-	var url = "http://gbf.game.mbga.jp/sell/content/index?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+	var url = window.location.origin + "/sell/content/index?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
 	
 	var req = new XMLHttpRequest();
 	req.open("GET", url);
@@ -70,7 +70,7 @@ function sell(uid, summons, rarity, angels) {
 
 function getList(uid, summons, rarity, angels, duplicate_key, index, list) {
 	var time = Date.now();
-	var url = "http://gbf.game.mbga.jp/" + (summons ? "summon" : "weapon") + "/list/" + index + "/3?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+	var url = window.location.origin + "/" + (summons ? "summon" : "weapon") + "/list/" + index + "/3?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
 	
 	var req = new XMLHttpRequest();
 	req.open("POST", url);
@@ -115,7 +115,7 @@ function getList(uid, summons, rarity, angels, duplicate_key, index, list) {
 
 function confirmSell(ids, summons, uid, duplicate_key, count, amount) {
 	var time = Date.now();
-	var url = "http://gbf.game.mbga.jp/sell/confirm/" + (summons ? "2" : "1") + "?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+	var url = window.location.origin + "/sell/confirm/" + (summons ? "2" : "1") + "?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
 	
 	var req = new XMLHttpRequest();
 	req.open("POST", url);
@@ -138,7 +138,7 @@ function confirmSell(ids, summons, uid, duplicate_key, count, amount) {
 
 function doSell(ids, summons, uid, duplicate_key, count, amount) {
 	var time = Date.now();
-	var url = "http://gbf.game.mbga.jp/sell/execute/" + (summons ? "2" : "1") + "?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+	var url = window.location.origin + "/sell/execute/" + (summons ? "2" : "1") + "?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
 	
 	var req = new XMLHttpRequest();
 	req.open("POST", url);

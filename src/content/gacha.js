@@ -114,7 +114,7 @@ function gacha(uid, eventName, empty, max, doc) {
 	}
 	
 	var time = Date.now();
-	var url = "http://gbf.game.mbga.jp/" + eventName + "/gacha/play?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+	var url = window.location.origin + "/" + eventName + "/gacha/play?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
 	
 	var req = new XMLHttpRequest();
 	req.open("POST", url);
@@ -128,7 +128,7 @@ function gacha(uid, eventName, empty, max, doc) {
 
 function contentAction(uid, eventName, eventId, empty, max) {
 	var time = Date.now();
-	var url = "http://gbf.game.mbga.jp/" + eventName + "/gacha/content/action/" + eventId + "?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+	var url = window.location.origin + "/" + eventName + "/gacha/content/action/" + eventId + "?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
 	
 	var req = new XMLHttpRequest();
 	req.open("GET", url);
@@ -143,7 +143,7 @@ function contentAction(uid, eventName, eventId, empty, max) {
 function result1(uid, eventName, eventId, empty, max, seq) {
 	seq++;
 	var time = Date.now();
-	var url = "http://gbf.game.mbga.jp/" + eventName + "/gacha/result/" + eventId + "?_=" + seq + "&t=" + time + "&uid=" + uid;
+	var url = window.location.origin + "/" + eventName + "/gacha/result/" + eventId + "?_=" + seq + "&t=" + time + "&uid=" + uid;
 	
 	var req = new XMLHttpRequest();
 	req.open("GET", url);
@@ -158,7 +158,7 @@ function result1(uid, eventName, eventId, empty, max, seq) {
 function contentResult(uid, eventName, eventId, empty, max, seq) {
 	seq++;
 	var time = Date.now();
-	var url = "http://gbf.game.mbga.jp/" + eventName + "/gacha/content/result/" + eventId + "?_=" + seq + "&t=" + time + "&uid=" + uid;
+	var url = window.location.origin + "/" + eventName + "/gacha/content/result/" + eventId + "?_=" + seq + "&t=" + time + "&uid=" + uid;
 	
 	var req = new XMLHttpRequest();
 	req.open("GET", url);
@@ -176,7 +176,7 @@ function contentResult(uid, eventName, eventId, empty, max, seq) {
 function result2(uid, eventName, eventId, empty, max, seq, doc) {
 	seq++;
 	var time = Date.now();
-	var url = "http://gbf.game.mbga.jp/" + eventName + "/gacha/result/" + eventId + "?_=" + seq + "&t=" + time + "&uid=" + uid;
+	var url = window.location.origin + "/" + eventName + "/gacha/result/" + eventId + "?_=" + seq + "&t=" + time + "&uid=" + uid;
 	
 	var req = new XMLHttpRequest();
 	req.open("GET", url);
