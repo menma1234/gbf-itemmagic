@@ -32,8 +32,7 @@ var minDelay, maxDelay;
 	});
 	
 	function sell(uid, summons, rarity, angels) {
-		var time = Date.now();
-		var url = window.location.origin + "/sell/content/index?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+		var url = buildUrl("/sell/content/index", uid);
 		
 		var req = new XMLHttpRequest();
 		req.open("GET", url);
@@ -49,8 +48,7 @@ var minDelay, maxDelay;
 	}
 
 	function getList(uid, summons, rarity, angels, duplicate_key, index, list) {
-		var time = Date.now();
-		var url = window.location.origin + "/" + (summons ? "summon" : "weapon") + "/list/" + index + "/3?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+		var url = buildUrl("/" + (summons ? "summon" : "weapon") + "/list/" + index + "/3", uid);
 		
 		var req = new XMLHttpRequest();
 		req.open("POST", url);
@@ -94,8 +92,7 @@ var minDelay, maxDelay;
 	}
 
 	function confirmSell(ids, summons, uid, duplicate_key, count, amount) {
-		var time = Date.now();
-		var url = window.location.origin + "/sell/confirm/" + (summons ? "2" : "1") + "?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+		var url = buildUrl("/sell/confirm/" + (summons ? "2" : "1"), uid);
 		
 		var req = new XMLHttpRequest();
 		req.open("POST", url);
@@ -117,8 +114,7 @@ var minDelay, maxDelay;
 	}
 
 	function doSell(ids, summons, uid, duplicate_key, count, amount) {
-		var time = Date.now();
-		var url = window.location.origin + "/sell/execute/" + (summons ? "2" : "1") + "?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+		var url = buildUrl("/sell/execute/" + (summons ? "2" : "1"), uid);
 		
 		var req = new XMLHttpRequest();
 		req.open("POST", url);

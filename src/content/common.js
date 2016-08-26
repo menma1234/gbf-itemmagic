@@ -7,6 +7,11 @@ function randomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function buildUrl(location, uid, seq) {
+	var time = Date.now();
+	return window.location.origin + location + "?_=" + (seq ? seq : (time - 1)) + "&t=" + time + "&uid=" + uid;
+}
+
 function getUid(callback) {
 	var func = function(e) {
 		window.removeEventListener("uid", func);

@@ -19,8 +19,7 @@
 	});
 
 	function getFreeInventorySpace(uid, summons, crateNum) {
-		var time = Date.now();
-		var url = window.location.origin + "/present/possessed?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+		var url = buildUrl("/present/possessed", uid);
 		
 		var req = new XMLHttpRequest();
 		req.open("GET", url);
@@ -48,8 +47,7 @@
 	}
 	
 	function moveAngels(uid, summons, crateNum, free) {
-		var time = Date.now();
-		var url = window.location.origin + "/container/content/index?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+		var url = buildUrl("/container/content/index", uid);
 		
 		var req = new XMLHttpRequest();
 		req.open("GET", url);
@@ -79,8 +77,7 @@
 	}
 
 	function getList(uid, summons, crateId, free, index, list, version) {
-		var time = Date.now();
-		var url = window.location.origin + "/" + (summons ? "summon" : "weapon") + "/list_container/" + index + (!summons ? "/-1" : "") + "/5/" + crateId + "?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+		var url = buildUrl("/" + (summons ? "summon" : "weapon") + "/list_container/" + index + (!summons ? "/-1" : "") + "/5/" + crateId, uid);
 		
 		var req = new XMLHttpRequest();
 		req.open("POST", url);
@@ -130,8 +127,7 @@
 	}
 
 	function doMove(uid, summons, crateId, ids) {
-		var time = Date.now();
-		var url = window.location.origin + "/container/move?_=" + (time - 1) + "&t=" + time + "&uid=" + uid;
+		var url = buildUrl("/container/move", uid);
 		
 		var req = new XMLHttpRequest();
 		req.open("POST", url);
