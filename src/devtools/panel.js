@@ -4,21 +4,21 @@ function addClickHandlers() {
 		document.getElementById("numTickets").disabled = !document.getElementById("setNumTickets").checked;
 	});
 	
-	document.getElementById("weapons").addEventListener("click", function() {
+	document.getElementById("sellWeapons").addEventListener("click", function() {
 		chrome.runtime.sendMessage({
 			action: "sell",
 			summons: false,
-			rarity: document.getElementById("rarity").selectedIndex + 1,
+			rarity: document.getElementById("rarity").value,
 			angels: document.getElementById("angels").checked,
 			tabId: chrome.devtools.inspectedWindow.tabId
 		});
 	});
 	
-	document.getElementById("summons").addEventListener("click", function() {
+	document.getElementById("sellSummons").addEventListener("click", function() {
 		chrome.runtime.sendMessage({
 			action: "sell",
 			summons: true,
-			rarity: document.getElementById("rarity").selectedIndex + 1,
+			rarity: document.getElementById("rarity").value,
 			angels: document.getElementById("angels").checked,
 			tabId: chrome.devtools.inspectedWindow.tabId
 		});
@@ -39,6 +39,15 @@ function addClickHandlers() {
 			action: "gacha",
 			empty: document.getElementById("empty").checked,
 			numTickets: numTickets,
+			tabId: chrome.devtools.inspectedWindow.tabId
+		});
+	});
+	
+	document.getElementById("crate").addEventListener("click", function() {
+		chrome.runtime.sendMessage({
+			action: "crate",
+			summons: document.getElementById("crateSummons").checked,
+			crateNum: document.getElementById("crateNum").value,
 			tabId: chrome.devtools.inspectedWindow.tabId
 		});
 	});

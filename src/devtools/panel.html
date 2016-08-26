@@ -5,6 +5,7 @@
 		
 		<style>
 			input[type = "checkbox"],
+			input[type = "radio"],
 			span {
 				vertical-align: middle;
 			}
@@ -28,8 +29,8 @@
 			<br />
 			<br />
 			
-			<button id = "weapons">Sell Weapons</button>
-			<button id = "summons">Sell Summons</button>
+			<button id = "sellWeapons">Sell Weapons</button>
+			<button id = "sellSummons">Sell Summons</button>
 			
 			<hr />
 			
@@ -46,6 +47,33 @@
 				<input type = "text" id = "numTickets" size = "1" disabled />
 				<span> tickets</span>
 			</label>
+			
+			<hr />
+			
+			<button id = "crate">Move Angels from Crate</button>
+			
+			<div style = "display: inline-block; margin-right:10px;">
+				<label>
+					<input type = "radio" name = "crate" id = "crateWeapons" checked />
+					<span>Weapon</span>
+				</label>
+				
+				<br />
+				
+				<label>
+					<input type = "radio" name = "crate" id = "crateSummons" />
+					<span>Summon</span>
+				</label>
+			</div>
+			
+			<select id = "crateNum">
+				<option value = "1" selected>1</option>
+				<option value = "2">2</option>
+				<option value = "3">3</option>
+				<option value = "4">4</option>
+				<option value = "5">5</option>
+				<option value = "6">6</option>
+			</select>
 		</div>
 	</body>
 </html>
