@@ -5,62 +5,43 @@ var minDelay, maxDelay;
 	var empty;
 	var numTickets;
 	
-	chrome.runtime.onMessage.addListener(
-		function(request, sender, sendResponse) {
-			if(!("action" in request) || request.action !== "gacha") {
-				return;
+	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+		if(!("action" in request) || request.action !== "gacha") {
+			return;
+		}
+		
+		if(!("empty" in request) || !("numTickets" in request)) {
+			return;
+		}
+		
+		hash = window.location.hash;
+		if(hash.length === 0 || !hash.startsWith("#event/")) {
+			alert("Please navigate to the event page first.");
+			return;
+		}
+		
+		var gachaButtons = document.getElementsByClassName("btn-medal");
+		if(gachaButtons.length === 0) {
+			alert("Please navigate to the gacha page first.");
+			return;
+		}
+		
+		var single = gachaButtons[gachaButtons.length - 1];
+		
+		if(single.getAttribute("disable") === "true") {
+			var tickets = getNumTickets(document);
+		
+			if(tickets > 1) {
+				alert("The box is empty. Please reset the box and try again.");
+			} else {
+				alert("Out of tickets.");
 			}
 			
-			if(!("empty" in request) || !("numTickets" in request)) {
-				return;
-			}
-			
-			hash = window.location.hash;
-			if(hash.length === 0 || !hash.startsWith("#event/")) {
-				alert("Please navigate to the event page first.");
-				return;
-			}
-			
-			var gachaButtons = document.getElementsByClassName("btn-medal");
-			if(gachaButtons.length === 0) {
-				alert("Please navigate to the gacha page first.");
-				return;
-			}
-			
-			var single = gachaButtons[gachaButtons.length - 1];
-			
-			if(single.getAttribute("disable") === "true") {
-				var tickets = getNumTickets(document);
-			
-				if(tickets > 1) {
-					alert("The box is empty. Please reset the box and try again.");
-				} else {
-					alert("Out of tickets.");
-				}
-				
-				return;
-			}
-			
-			window.addEventListener("uid", uidCallback);
-			
-			var script = document.createElement("script");
-			script.textContent = "(" + function() {
-				var event = new CustomEvent("uid", {detail: Game.userId});
-				window.dispatchEvent(event);
-			} + ")();";
-			
-			document.head.appendChild(script);
-			document.head.removeChild(script);
-			
-			empty = request.empty;
-			numTickets = request.numTickets;
-		});
-
-	function uidCallback(e) {
-		var uid = e.detail;
-		window.removeEventListener("uid", uidCallback);
-			
-		chrome.storage.sync.get( {
+			return;
+		}
+		
+		getUid(function(uid) {
+			chrome.storage.sync.get({
 				minDelay: 300,
 				maxDelay: 800
 			}, function(items) {
@@ -69,7 +50,11 @@ var minDelay, maxDelay;
 				
 				gacha(uid, hash.replace(/^#event\/(.*?)(\/.*?)?$/, "$1"), empty, numTickets, document);
 			});
-	}
+		});
+		
+		empty = request.empty;
+		numTickets = request.numTickets;
+	});
 })();
 
 function gacha(uid, eventName, empty, max, doc) {
@@ -120,8 +105,8 @@ function gacha(uid, eventName, empty, max, doc) {
 	req.open("POST", url);
 	
 	req.onload = function() {
-			contentAction(uid, eventName, id, empty, (max === null ? max : (max - count * 2)));
-		};
+		contentAction(uid, eventName, id, empty, (max === null ? max : (max - count * 2)));
+	};
 	
 	req.send(JSON.stringify({special_token: null, gacha_id: id, count: count, duplicate_key: duplicate_key}));
 }
@@ -134,8 +119,8 @@ function contentAction(uid, eventName, eventId, empty, max) {
 	req.open("GET", url);
 	
 	req.onload = function() {
-			result1(uid, eventName, eventId, empty, max, time - 1);
-		};
+		result1(uid, eventName, eventId, empty, max, time - 1);
+	};
 	
 	req.send();
 }
@@ -149,8 +134,8 @@ function result1(uid, eventName, eventId, empty, max, seq) {
 	req.open("GET", url);
 	
 	req.onload = function() {
-			contentResult(uid, eventName, eventId, empty, max, seq);
-		};
+		contentResult(uid, eventName, eventId, empty, max, seq);
+	};
 	
 	req.send();
 }
@@ -164,11 +149,11 @@ function contentResult(uid, eventName, eventId, empty, max, seq) {
 	req.open("GET", url);
 	
 	req.onload = function() {
-			var docString = decodeURIComponent(JSON.parse(req.responseText).data);
-			var doc = new DOMParser().parseFromString(docString, "text/html");
-			
-			result2(uid, eventName, eventId, empty, max, seq, doc);
-		};
+		var docString = decodeURIComponent(JSON.parse(req.responseText).data);
+		var doc = new DOMParser().parseFromString(docString, "text/html");
+		
+		result2(uid, eventName, eventId, empty, max, seq, doc);
+	};
 	
 	req.send();
 }
@@ -182,27 +167,27 @@ function result2(uid, eventName, eventId, empty, max, seq, doc) {
 	req.open("GET", url);
 	
 	req.onload = function() {
-			var response = JSON.parse(req.responseText);
-			if(!empty) {
-				for(var i = 0; i < response.result.length; i++) {
-					if(response.result[i].reward_rare_val == 4) {
-						alert("SSR pulled. You have " + getNumTickets(doc) + " tickets remaining.");
-						return;
-					}
+		var response = JSON.parse(req.responseText);
+		if(!empty) {
+			for(var i = 0; i < response.result.length; i++) {
+				if(response.result[i].reward_rare_val == 4) {
+					alert("SSR pulled. You have " + getNumTickets(doc) + " tickets remaining.");
+					return;
 				}
 			}
+		}
+		
+		if(max === 0) {
+			var tickets = getNumTickets(doc);
 			
-			if(max === 0) {
-				var tickets = getNumTickets(doc);
-				
-				alert("Complete. You have " + getNumTickets(doc) + " tickets remaining.");
-				return;
-			}
-			
-			setTimeout(function() {
-					gacha(uid, eventName, empty, max, doc);
-				}, randomInt(minDelay, maxDelay));
-		};
+			alert("Complete. You have " + getNumTickets(doc) + " tickets remaining.");
+			return;
+		}
+		
+		setTimeout(function() {
+			gacha(uid, eventName, empty, max, doc);
+		}, randomInt(minDelay, maxDelay));
+	};
 	
 	req.send();
 }
