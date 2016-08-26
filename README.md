@@ -2,9 +2,10 @@
 
 This extension for Chrome provides various tools for working with items in the mobile game [Granblue Fantasy](http://granbluefantasy.jp/). It currently uses a Developer Tools panel. This may be changed in the future depending on how lazy I am. There's no real reason why the interface is in the Developer Tools, other than it being easier for me.
 
-There are currently two features that this extension provides:
+There are currently three features that this extension provides:
 * Buttons for one-click selling of weapons and summons (somewhat deprecated now due to the new functionality of the presents box, but still kept here in case you need to clear out your inventory)
 * A button to automatically pull from the event gacha
+* A button to move all angel weapons/summons from crate to inventory. The main point of this feature is to have an easy way of moving all angels of one type from your presents to your inventory by using the built-in presents management.
 
 ## Installation
 
@@ -17,6 +18,8 @@ Open Developer Tools and switch to the GBF Item Magic panel.
 For selling weapons and summons, select the options and click sell. A dialog box will appear in the browser asking you to confirm.
 
 For pulling from the event gacha, click the corresponding button. You *must* be on the event page (or the gacha page for Guild Wars events) in order to use it. The script will stop once the SSR is pulled unless "Don't stop at SSR" is checked. The number of items pulled each time is dependent on your setting when you click the button (e.g. if you have it set to 100, then it will pull 100 at a time, if it's set to 50, it'll pull 50, etc.).
+
+For moving angels, select either weapon or summon and the crate number, and then press the button. A dialog box will appear in the browser asking you to confirm.
 
 ## Important Notes
 
