@@ -43,11 +43,11 @@ function addClickHandlers() {
 		});
 	});
 	
-	document.getElementById("crate").addEventListener("click", function() {
+	document.getElementById("stash").addEventListener("click", function() {
 		chrome.runtime.sendMessage({
-			action: "crate",
-			summons: document.getElementById("crateSummons").checked,
-			crateNum: document.getElementById("crateNum").value,
+			action: "stash",
+			summons: document.getElementById("stashSummons").checked,
+			stashNum: document.getElementById("stashNum").value,
 			tabId: chrome.devtools.inspectedWindow.tabId
 		});
 	});

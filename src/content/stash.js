@@ -1,24 +1,24 @@
 (function() {
-	var summons, crateNum;
+	var summons, stashNum;
 	
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-		if(!("action" in request) || request.action !== "crate") {
+		if(!("action" in request) || request.action !== "stash") {
 			return;
 		}
 		
-		if(!("summons" in request) || !("crateNum" in request)) {
+		if(!("summons" in request) || !("stashNum" in request)) {
 			return;
 		}
 		
 		summons = request.summons;
-		crateNum = request.crateNum;
+		stashNum = request.stashNum;
 		
 		getUid(function(uid) {
-			getFreeInventorySpace(uid, summons, crateNum);
+			getFreeInventorySpace(uid, summons, stashNum);
 		});
 	});
 
-	function getFreeInventorySpace(uid, summons, crateNum) {
+	function getFreeInventorySpace(uid, summons, stashNum) {
 		var url = buildUrl("/present/possessed", uid);
 		
 		var req = new XMLHttpRequest();
@@ -40,13 +40,13 @@
 				return;
 			}
 			
-			moveAngels(uid, summons, crateNum, free);
+			moveAngels(uid, summons, stashNum, free);
 		};
 		
 		req.send();
 	}
 	
-	function moveAngels(uid, summons, crateNum, free) {
+	function moveAngels(uid, summons, stashNum, free) {
 		var url = buildUrl("/container/content/index", uid);
 		
 		var req = new XMLHttpRequest();
@@ -56,28 +56,28 @@
 			var data = decodeURIComponent(JSON.parse(req.responseText).data);
 			var doc = new DOMParser().parseFromString(data, "text/html");
 			
-			var crates;
+			var stashes;
 			if(!summons) {
-				crates = doc.querySelectorAll(".btn-container[data-href*='weapon']");
+				stashes = doc.querySelectorAll(".btn-container[data-href*='weapon']");
 			} else {
-				crates = doc.querySelectorAll(".btn-container[data-href*='summon']");
+				stashes = doc.querySelectorAll(".btn-container[data-href*='summon']");
 			}
 			
-			if(crateNum < 1 || crateNum > crates.length) {
-				alert("Invalid crate number.");
+			if(stashNum < 1 || stashNum > stashes.length) {
+				alert("Invalid stash number.");
 				return;
 			}
 			
 			getVersion(function(version) {
-				getList(uid, summons, crates[crateNum - 1].getAttribute("c_id"), free, 1, [], version);
+				getList(uid, summons, stashes[stashNum - 1].getAttribute("c_id"), free, 1, [], version);
 			});
 		};
 		
 		req.send();
 	}
 
-	function getList(uid, summons, crateId, free, index, list, version) {
-		var url = buildUrl("/" + (summons ? "summon" : "weapon") + "/list_container/" + index + (!summons ? "/-1" : "") + "/5/" + crateId, uid);
+	function getList(uid, summons, stashId, free, index, list, version) {
+		var url = buildUrl("/" + (summons ? "summon" : "weapon") + "/list_container/" + index + (!summons ? "/-1" : "") + "/5/" + stashId, uid);
 		
 		var req = new XMLHttpRequest();
 		req.open("POST", url);
@@ -102,7 +102,7 @@
 			if(response.next <= index || list.length === free) {
 				// Done
 				if(list.length === 0) {
-					alert("No angels were found in the selected crate.");
+					alert("No angels were found in the selected stash.");
 					return;
 				}
 				
@@ -111,22 +111,22 @@
 						return val.param.id;
 					});
 					
-					doMove(uid, summons, crateId, ids);
+					doMove(uid, summons, stashId, ids);
 				}
 			} else {
 				// There are more pages, keep going
-				getList(uid, summons, crateId, free, index + 1, list, version);
+				getList(uid, summons, stashId, free, index + 1, list, version);
 			}
 		};
 		
 		req.onerror = function() {
-			alert("An error occurred while trying to get the contents of the crate.");
+			alert("An error occurred while trying to get the contents of the stash.");
 		};
 		
 		req.send(JSON.stringify({special_token: null, is_new: false}));
 	}
 
-	function doMove(uid, summons, crateId, ids) {
+	function doMove(uid, summons, stashId, ids) {
 		var url = buildUrl("/container/move", uid);
 		
 		var req = new XMLHttpRequest();
@@ -147,7 +147,7 @@
 			special_token: null,
 			item_list: ids,
 			duplicate_key: "undefined_" + ids.join("_"),
-			container_id: crateId,
+			container_id: stashId,
 			to: "to_list"
 		}));
 	}
