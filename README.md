@@ -24,6 +24,7 @@ For moving angels, select either weapon or summon and the stash number, and then
 ## Important Notes
 
 * When selling weapons, there is no check for whether or not a weapon has a skill. If you are using the autoselling feature, be sure that there are no weapons with skills in your inventory if you don't want those to be sold. The one exception is devil elements, which are always ignored.
+* Moving from stash to inventory is affected by the current filters you have on the stash, so if you have angels in your stash but they are hidden by the filters, the extension will not find them.
 * If you navigate away from the page while the extension is doing its thing, it will stop prematurely.
 
 ## How to Play with Developer Tools
