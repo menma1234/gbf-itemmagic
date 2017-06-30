@@ -9,7 +9,7 @@ function randomInt(min, max) {
 
 function buildUrl(location, uid, seq) {
 	var time = Date.now();
-	return window.location.origin + location + "?_=" + (seq ? seq : (time - 1)) + "&t=" + time + "&uid=" + uid;
+	return window.location.origin + location + "?_=" + (seq || (time - 1)) + "&t=" + time + "&uid=" + uid;
 }
 
 function getUid(callback) {

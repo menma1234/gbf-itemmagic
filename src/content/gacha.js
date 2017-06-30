@@ -4,18 +4,20 @@
     var eventName;
     var empty;
     var max;
+    var autoReset;
 
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         if(!("action" in request) || request.action !== "gacha") {
             return;
         }
         
-        if(!("empty" in request) || !("numTickets" in request)) {
+        if(!("empty" in request) || !("numTickets" in request) || !("autoReset" in request)) {
             return;
         }
         
         empty = request.empty;
         max = request.numTickets;
+        autoReset = request.autoReset;
         
         var hash = window.location.hash;
         if(hash.length === 0 || !hash.startsWith("#event/")) {
@@ -35,20 +37,17 @@
             return;
         }
         
-        var single = gachaButtons[gachaButtons.length - 1];
-        
-        if(single.getAttribute("disable") === "true") {
-            var tickets = getNumTickets(document);
-        
-            if(tickets > 1) {
-                alert("The box is empty. Please reset the box and try again.");
-            } else {
-                alert("Out of tickets.");
+        if(!empty) {
+            if(hasResetButton(document)) {
+                resetBox(document, doGetUid);
+                return;
             }
-            
-            return;
         }
         
+        doGetUid(document);
+    });
+    
+    function doGetUid(doc) {
         getUid(function(uidResult) {
             uid = uidResult;
             chrome.storage.sync.get({
@@ -58,10 +57,10 @@
                 minDelay = items.minDelay;
                 maxDelay = items.maxDelay;
                 
-                gacha(document);
+                gacha(doc);
             });
         });
-    });
+    }
 
     function gacha(doc) {
         var gachaButtons = doc.getElementsByClassName("btn-medal");
@@ -79,7 +78,11 @@
             var tickets = getNumTickets(doc);
             
             if(tickets > 1) {
-                alert("Box emptied. You have " + tickets + " tickets remaining.");
+                if(!autoReset) {
+                    alert("The box is empty. Please reset the box and try again.");
+                } else {
+                    resetBox(doc, gacha);
+                }
             } else {
                 alert("Out of tickets.");
             }
@@ -93,7 +96,7 @@
         }
         
         var id = single.getAttribute("data-id");
-        var duplicate_key = single.getAttribute("data-duplicate-key");
+        var duplicateKey = single.getAttribute("data-duplicate-key");
         var count = 1;
         
         if(multi !== null) {
@@ -113,10 +116,10 @@
             if(max) {
                 max -= count * 2;
             }
-            contentAction(id, max);
+            contentAction(id);
         };
         
-        req.send(JSON.stringify({special_token: null, gacha_id: id, count: count, duplicate_key: duplicate_key}));
+        req.send(JSON.stringify({special_token: null, gacha_id: id, count: count, duplicate_key: duplicateKey}));
     }
 
     function contentAction(eventId) {
@@ -176,7 +179,15 @@
             if(!empty) {
                 for(var i = 0; i < response.result.length; i++) {
                     if(response.result[i].reward_rare_val == 4) {
-                        alert("SSR pulled. You have " + getNumTickets(doc) + " tickets remaining.");
+                        if(!autoReset) {
+                            alert("SSR pulled. You have " + getNumTickets(doc) + " tickets remaining.");
+                        } else {
+                            if(hasResetButton(doc)) {
+                                resetBox(doc, gacha);
+                            } else {
+                                alert("SSR pulled but can't reset. Please enable the option to not stop on SSR.");
+                            }
+                        }
                         return;
                     }
                 }
@@ -203,5 +214,43 @@
         } else {
             return doc.getElementsByClassName("txt-current-point")[0].innerHTML;
         }
+    }
+
+    function hasResetButton(doc) {
+        return doc.getElementsByClassName("btn-reset").length > 0;
+    }
+
+    function resetBox(doc, callback) {
+        var resetButton = doc.getElementsByClassName("btn-reset")[0];
+        var gachaId = resetButton.getAttribute("data-gacha-id");
+        var boxId = resetButton.getAttribute("data-box-id");
+        var duplicateKey = resetButton.getAttribute("data-duplicate-key");
+        
+        var url = buildUrl("/" + eventName + "/gacha/reset_box", uid);
+        
+        var req = new XMLHttpRequest();
+        req.open("POST", url);
+        
+        req.onload = function() {
+            getGachaIndex(callback);
+        };
+        
+        req.send(JSON.stringify({special_token: null, gacha_id: gachaId, box_id: boxId, duplicate_key: duplicateKey}));
+    }
+    
+    function getGachaIndex(callback) {
+        var url = buildUrl("/" + eventName + "/gacha/content/index", uid);
+        
+        var req = new XMLHttpRequest();
+        req.open("GET", url);
+        
+        req.onload = function() {
+            var docString = decodeURIComponent(JSON.parse(req.responseText).data);
+            var doc = new DOMParser().parseFromString(docString, "text/html");
+            
+            callback(doc);
+        };
+        
+        req.send();
     }
 })();

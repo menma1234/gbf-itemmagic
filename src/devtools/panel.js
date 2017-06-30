@@ -39,6 +39,7 @@ function addClickHandlers() {
 			action: "gacha",
 			empty: document.getElementById("empty").checked,
 			numTickets: numTickets,
+			autoReset: document.getElementById("autoReset").checked,
 			tabId: chrome.devtools.inspectedWindow.tabId
 		});
 	});
