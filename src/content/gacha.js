@@ -239,7 +239,8 @@
     }
     
     function getGachaIndex(callback) {
-        var url = buildUrl("/" + eventName + "/gacha/content/index", uid);
+        var url = buildUrl(eventName.startsWith("teamraid") ? ("/" + eventName + "/gacha/content/index")
+            : ("/" + eventName + "/top/content/newindex"), uid);
         
         var req = new XMLHttpRequest();
         req.open("GET", url);
