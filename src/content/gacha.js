@@ -107,7 +107,7 @@
             count = 1;
         }
         
-        var url = buildUrl("/" + eventName + "/gacha/play", uid);
+        var url = buildUrl("/" + eventName + "/rest/gacha/play", uid);
         
         var req = new XMLHttpRequest();
         req.open("POST", url);
@@ -138,7 +138,7 @@
 
     function result1(eventId, seq) {
         seq++;
-        var url = buildUrl("/" + eventName + "/gacha/result/" + eventId, uid, seq);
+        var url = buildUrl("/" + eventName + "/rest/gacha/result/" + eventId, uid, seq);
         
         var req = new XMLHttpRequest();
         req.open("GET", url);
@@ -169,7 +169,7 @@
 
     function result2(eventId, seq, doc) {
         seq++;
-        var url = buildUrl("/" + eventName + "/gacha/result/" + eventId, uid, seq);
+        var url = buildUrl("/" + eventName + "/rest/gacha/result/" + eventId, uid, seq);
         
         var req = new XMLHttpRequest();
         req.open("GET", url);
@@ -226,7 +226,7 @@
         var boxId = resetButton.getAttribute("data-box-id");
         var duplicateKey = resetButton.getAttribute("data-duplicate-key");
         
-        var url = buildUrl("/" + eventName + "/gacha/reset_box", uid);
+        var url = buildUrl("/" + eventName + "/rest/gacha/reset_box", uid);
         
         var req = new XMLHttpRequest();
         req.open("POST", url);
