@@ -52,6 +52,13 @@ function addClickHandlers() {
 			tabId: chrome.devtools.inspectedWindow.tabId
 		});
 	});
+	
+	document.getElementById("ship").addEventListener("click", function() {
+        chrome.runtime.sendMessage({
+			action: "ship",
+			tabId: chrome.devtools.inspectedWindow.tabId
+		});
+	});
 }
 
 document.addEventListener("DOMContentLoaded", addClickHandlers);
