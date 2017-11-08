@@ -5,6 +5,7 @@
     var empty;
     var max;
     var autoReset;
+    var isEventEnded;
 
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         if(!("action" in request) || request.action !== "gacha") {
@@ -30,6 +31,8 @@
             alert("Invalid event page URL.");
             return;
         }
+        
+        isEventEnded = hash.indexOf("end");
         
         var gachaButtons = document.getElementsByClassName("btn-medal");
         if(gachaButtons.length === 0) {
@@ -239,8 +242,16 @@
     }
     
     function getGachaIndex(callback) {
-        var url = buildUrl(eventName.startsWith("teamraid") ? ("/" + eventName + "/gacha/content/index")
-            : ("/" + eventName + "/top/content/newindex"), uid);
+        var url;
+        if(eventName.startsWith("teamraid")) {
+            url = buildUrl("/" + eventName + "/gacha/content/index", uid);
+        } else {
+            if(isEventEnded) {
+                url = buildUrl("/" + eventName + "/end/content/newindex", uid);
+            } else {
+                url = buildUrl("/" + eventName + "/top/content/newindex", uid);
+            }
+        }
         
         var req = new XMLHttpRequest();
         req.open("GET", url);
