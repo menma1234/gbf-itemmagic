@@ -1,88 +1,88 @@
 <!doctype html>
 <html>
-	<head>
-		<script src="panel.js"></script>
-		
-		<style>
-			input[type = "checkbox"],
-			input[type = "radio"],
-			span {
-				vertical-align: middle;
-			}
-		</style>
-	</head>
-	<body>
-		<div id = "options">
-			<span>Include all up to rarity:</span>
-			<select id = "rarity">
-				<option value = "1" selected>N</option>
-				<option value = "2">R</option>
-				<option value = "3">SR</option>
-				<option value = "4">SSR</option>
-			</select>
-			
-			<label style = "margin-left:10px;">
-				<input type = "checkbox" id = "angels" />
-				<span>Include angels</span>
-			</label>
-			
-			<br />
-			<br />
-			
-			<button id = "sellWeapons">Sell Weapons</button>
-			<button id = "sellSummons">Sell Summons</button>
-			
-			<hr />
-			
-			<button id = "gacha">Pull From Event Gacha</button>
-			
-			<label style = "margin-left:10px;">
-				<input type = "checkbox" id = "empty" />
-				<span>Don't stop at SSR</span>
-			</label>
-			
-			<label style = "margin-left:10px;">
-				<input type = "checkbox" id = "setNumTickets" />
-				<span>Stop after </span>
-				<input type = "text" id = "numTickets" size = "1" disabled />
-				<span> tickets</span>
-			</label>
-			
-			<label style = "margin-left:10px;">
-				<input type = "checkbox" id = "autoReset" />
-				<span>Auto reset</span>
-			</label>
-			
-			<hr />
-			
-			<button id = "stash">Move Angels from Stash</button>
-			
-			<div style = "display: inline-block; margin-right:10px;">
-				<label>
-					<input type = "radio" name = "stash" id = "stashWeapons" checked />
-					<span>Weapon</span>
-				</label>
-				
-				<br />
-				
-				<label>
-					<input type = "radio" name = "stash" id = "stashSummons" />
-					<span>Summon</span>
-				</label>
-			</div>
-			
-			<select id = "stashNum">
-				<option value = "1" selected>1</option>
-				<option value = "2">2</option>
-				<option value = "3">3</option>
-				<option value = "4">4</option>
-				<option value = "5">5</option>
-				<option value = "6">6</option>
-			</select>
-			
-			<hr />
-			
-			<button id = "ship">Feed Recommended to Ship</button>
-		</div>
-	</body>
+    <head>
+        <script src="panel.js"></script>
+        
+        <style>
+            input[type = "checkbox"],
+            input[type = "radio"],
+            span {
+                vertical-align: middle;
+            }
+        </style>
+    </head>
+    <body>
+        <div id = "options">
+            <span>Include all up to rarity:</span>
+            <select id = "rarity">
+                <option value = "1" selected>N</option>
+                <option value = "2">R</option>
+                <option value = "3">SR</option>
+                <option value = "4">SSR</option>
+            </select>
+            
+            <label style = "margin-left:10px;">
+                <input type = "checkbox" id = "angels" />
+                <span>Include angels</span>
+            </label>
+            
+            <br />
+            <br />
+            
+            <button id = "sellWeapons">Sell Weapons</button>
+            <button id = "sellSummons">Sell Summons</button>
+            
+            <hr />
+            
+            <button id = "gacha">Pull From Event Gacha</button>
+            
+            <label style = "margin-left:10px;">
+                <input type = "checkbox" id = "empty" />
+                <span>Don't stop at SSR</span>
+            </label>
+            
+            <label style = "margin-left:10px;">
+                <input type = "checkbox" id = "setNumTickets" />
+                <span>Stop after </span>
+                <input type = "text" id = "numTickets" size = "1" disabled />
+                <span> tickets</span>
+            </label>
+            
+            <label style = "margin-left:10px;">
+                <input type = "checkbox" id = "autoReset" />
+                <span>Auto reset</span>
+            </label>
+            
+            <hr />
+            
+            <button id = "stash">Move Angels from Stash</button>
+            
+            <div style = "display: inline-block; margin-right:10px;">
+                <label>
+                    <input type = "radio" name = "stash" id = "stashWeapons" checked />
+                    <span>Weapon</span>
+                </label>
+                
+                <br />
+                
+                <label>
+                    <input type = "radio" name = "stash" id = "stashSummons" />
+                    <span>Summon</span>
+                </label>
+            </div>
+            
+            <select id = "stashNum">
+                <option value = "1" selected>1</option>
+                <option value = "2">2</option>
+                <option value = "3">3</option>
+                <option value = "4">4</option>
+                <option value = "5">5</option>
+                <option value = "6">6</option>
+            </select>
+            
+            <hr />
+            
+            <button id = "ship">Feed Recommended to Ship</button>
+        </div>
+    </body>
 </html>

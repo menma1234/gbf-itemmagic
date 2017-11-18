@@ -1,33 +1,33 @@
 {
-	"name": "GBF Item Magic",
-	"version": "1.4.1",
-	"minimum_chrome_version": "40.0",
-	"manifest_version": 2,
-	"description": "Provides various tools for saving time in Granblue Fantasy when working with items.",
-	"devtools_page": "src/devtools/devtools.html",
-	"background": {
-		"scripts": ["src/bg/background.js"],
-		"persistent": false
-	},
-	"content_scripts": [
-		{
-			"matches": ["http://gbf.game.mbga.jp/*", "http://game.granbluefantasy.jp/*"],
-			"js": [
-				"src/content/common.js",
-				"src/content/sell.js",
-				"src/content/gacha.js",
-				"src/content/stash.js",
-				"src/content/ship.js"
-			]
-		}
-	],
-	"options_ui": {
-		"page": "src/options/options.html",
-		"chrome_style": true
-	},
-	"permissions": [
-		"http://gbf.game.mbga.jp/*",
-		"http://game.granbluefantasy.jp/*",
-		"storage"
-	]
+    "name": "GBF Item Magic",
+    "version": "1.4.1",
+    "minimum_chrome_version": "40.0",
+    "manifest_version": 2,
+    "description": "Provides various tools for saving time in Granblue Fantasy when working with items.",
+    "devtools_page": "src/devtools/devtools.html",
+    "background": {
+        "scripts": ["src/bg/background.js"],
+        "persistent": false
+    },
+    "content_scripts": [
+        {
+            "matches": ["http://gbf.game.mbga.jp/*", "http://game.granbluefantasy.jp/*"],
+            "js": [
+                "src/content/common.js",
+                "src/content/sell.js",
+                "src/content/gacha.js",
+                "src/content/stash.js",
+                "src/content/ship.js"
+            ]
+        }
+    ],
+    "options_ui": {
+        "page": "src/options/options.html",
+        "chrome_style": true
+    },
+    "permissions": [
+        "http://gbf.game.mbga.jp/*",
+        "http://game.granbluefantasy.jp/*",
+        "storage"
+    ]
 }
