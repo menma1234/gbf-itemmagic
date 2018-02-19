@@ -40,11 +40,9 @@
             return;
         }
         
-        if(!empty) {
-            if(hasResetButton(document)) {
-                resetBox(document, doGetUid);
-                return;
-            }
+        if(!empty && autoReset && hasResetButton(document)) {
+            resetBox(document, doGetUid);
+            return;
         }
         
         doGetUid(document);
