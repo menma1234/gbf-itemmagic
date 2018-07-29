@@ -1,6 +1,6 @@
 {
     "name": "GBF Item Magic",
-    "version": "1.4.2",
+    "version": "1.5.0",
     "minimum_chrome_version": "40.0",
     "manifest_version": 2,
     "description": "Provides various tools for saving time in Granblue Fantasy when working with items.",
@@ -17,7 +17,8 @@
                 "src/content/sell.js",
                 "src/content/gacha.js",
                 "src/content/stash.js",
-                "src/content/ship.js"
+                "src/content/ship.js",
+                "src/content/reserve.js"
             ]
         }
     ],

@@ -59,6 +59,14 @@ function addClickHandlers() {
             tabId: chrome.devtools.inspectedWindow.tabId
         });
     });
+    
+    document.getElementById("reserve").addEventListener("click", function() {
+        chrome.runtime.sendMessage({
+            action: "reserve",
+            summons: document.getElementById("reserveSummons").checked,
+            tabId: chrome.devtools.inspectedWindow.tabId
+        });
+    });
 }
 
 document.addEventListener("DOMContentLoaded", addClickHandlers);
