@@ -96,7 +96,8 @@
         req.send(JSON.stringify({
             special_token: null,
             materials: ids.slice(0, 20),
-            possession_type: summons ? 2 : 1
+            possession_type: summons ? 2 : 1,
+            is_recommend: false
         }));
     }
 
@@ -127,7 +128,8 @@
         req.send(JSON.stringify({
             special_token: null,
             materials: ids.splice(0, 20),
-            possession_type: summons ? 2 : 1
+            possession_type: summons ? 2 : 1,
+            is_recommend: false
         }));
     }
 })();
