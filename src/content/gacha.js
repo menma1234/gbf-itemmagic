@@ -6,6 +6,7 @@
     var max;
     var autoReset;
     var isEventEnded;
+    var version;
 
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         if(!("action" in request) || request.action !== "gacha") {
@@ -32,7 +33,7 @@
             return;
         }
         
-        isEventEnded = hash.indexOf("end");
+        isEventEnded = hash.indexOf("end") >= 0;
         
         var gachaButtons = document.getElementsByClassName("btn-medal");
         if(gachaButtons.length === 0) {
@@ -49,16 +50,19 @@
     });
     
     function doGetUid(doc) {
-        getUid(function(uidResult) {
-            uid = uidResult;
-            chrome.storage.sync.get({
-                minDelay: 300,
-                maxDelay: 800
-            }, function(items) {
-                minDelay = items.minDelay;
-                maxDelay = items.maxDelay;
-                
-                gacha(doc);
+        getVersion(function(v) {
+            version = v;
+            getUid(function(uidResult) {
+                uid = uidResult;
+                chrome.storage.sync.get({
+                    minDelay: 300,
+                    maxDelay: 800
+                }, function(items) {
+                    minDelay = items.minDelay;
+                    maxDelay = items.maxDelay;
+                    
+                    gacha(doc);
+                });
             });
         });
     }
@@ -96,7 +100,7 @@
             return;
         }
         
-        var id = single.getAttribute("data-id");
+        var id = parseInt(single.getAttribute("data-id"));
         var duplicateKey = single.getAttribute("data-duplicate-key");
         var count = 1;
         
@@ -120,6 +124,7 @@
             contentAction(id);
         };
         
+        req.setRequestHeader("Content-Type", "application/json");
         req.send(JSON.stringify({special_token: null, gacha_id: id, count: count, duplicate_key: duplicateKey}));
     }
 
@@ -134,6 +139,8 @@
             result1(eventId, seq);
         };
         
+        req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        req.setRequestHeader("X-VERSION", version);
         req.send();
     }
 
@@ -165,6 +172,8 @@
             result2(eventId, seq, doc);
         };
         
+        req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        req.setRequestHeader("X-VERSION", version);
         req.send();
     }
 
@@ -223,8 +232,8 @@
 
     function resetBox(doc, callback) {
         var resetButton = doc.getElementsByClassName("btn-reset")[0];
-        var gachaId = resetButton.getAttribute("data-gacha-id");
-        var boxId = resetButton.getAttribute("data-box-id");
+        var gachaId = parseInt(resetButton.getAttribute("data-gacha-id"));
+        var boxId = parseInt(resetButton.getAttribute("data-box-id"));
         var duplicateKey = resetButton.getAttribute("data-duplicate-key");
         
         var url = buildUrl("/" + eventName + "/rest/gacha/reset_box", uid);
@@ -236,6 +245,7 @@
             getGachaIndex(callback);
         };
         
+        req.setRequestHeader("Content-Type", "application/json");
         req.send(JSON.stringify({special_token: null, gacha_id: gachaId, box_id: boxId, duplicate_key: duplicateKey}));
     }
     
@@ -261,6 +271,8 @@
             callback(doc);
         };
         
+        req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        req.setRequestHeader("X-VERSION", version);
         req.send();
     }
 })();
