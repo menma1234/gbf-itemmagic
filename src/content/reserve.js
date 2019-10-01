@@ -1,7 +1,8 @@
 (function() {
-    var summons, stashNum;
+    var summons;
     var uid, version;
-    var startCount = null;
+    var startCount, endCount;
+    var exp;
     
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         if(!("action" in request) || request.action !== "reserve") {
@@ -13,6 +14,9 @@
         }
         
         summons = request.summons;
+        startCount = null;
+        endCount = null;
+        exp = 0;
         
         getUid(function(_uid) {
             uid = _uid;
@@ -20,88 +24,48 @@
             getVersion(function(_version) {
                 version = _version;
                 
-                getList(1, []);
+                getList();
             });
         });
     });
 
-    function getList(index, list) {
-        var url = buildUrl("/" + (summons ? "summon" : "weapon") + "/list/" + index + "/7", uid);
+    function getList() {
+        var url = buildUrl("/recycling/recommend_list/" + (summons ? "2" : "1"), uid);
         
         var req = new XMLHttpRequest();
-        req.open("POST", url);
-        req.setRequestHeader("Content-Type", "application/json");
+        req.open("GET", url);
         req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         req.setRequestHeader("X-VERSION", version);
         
         req.onload = function() {
             var response = JSON.parse(req.responseText);
+            var list = response.recommend_list;
             
-            for(var i = 0; i < response.list.length; i++) {
-                var entry = response.list[i];
-                if(entry.param.quality === "0" && ((summons && angelSummonIds.indexOf(entry.master.id) >= 0) || (!summons && angelWeaponIds.indexOf(entry.master.id) >= 0))) {
-                    list.push(entry);
-                }
-            }
-            
-            if(response.next <= index) {
-                // Done
-                if(list.length === 0) {
-                    alert("No angels were found in your inventory.");
-                    return;
+            if (startCount === null) {
+                if (list === null) {
+                    alert("No matching angels found.");
                 }
                 
-                if(window.confirm(list.length + " angel " + (summons ? "summon" : "weapon") + (list.length > 1 ? "s" : "") + " will be reserved.")) {
-                    var ids = list.map(function(val) {
-                        return +val.param.id;
-                    });
-                    
-                    confirmReserve(ids, 0);
-                }
-            } else {
-                // There are more pages, keep going
-                getList(index + 1, list);
-            }
-        };
-        
-        req.onerror = function() {
-            alert("An error occurred while trying to get the contents of your inventory.");
-        };
-        
-        req.send(JSON.stringify({special_token: null, is_new: false, status: 1}));
-    }
-
-    function confirmReserve(ids, exp) {
-        var url = buildUrl("/recycling/confirm");
-        
-        var req = new XMLHttpRequest();
-        req.open("POST", url);
-        req.setRequestHeader("Content-Type", "application/json");
-        req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-        req.setRequestHeader("X-VERSION", version);
-        
-        req.onload = function() {
-            if (startCount === null) {
-                var response = JSON.parse(req.responseText);
-                startCount = +response.before_number;
+                startCount = +response.recycling_item.before_number;
             }
             
-            doReserve(ids, exp);
+            if (list !== null) {
+                doReserve(list.map(function(e) {
+                    return e.id;
+                }))
+            } else {
+                alert("Result:\nTotal EXP gained: " + exp + "\nVessels gained: " + (endCount - startCount));
+            }
         };
         
         req.onerror = function() {
-            alert("An error occurred while trying to confirm reserving.");
+            alert("An error occurred while trying to get the recommended items to reserve.");
         };
         
-        req.send(JSON.stringify({
-            special_token: null,
-            materials: ids.slice(0, 20),
-            possession_type: summons ? 2 : 1,
-            is_recommend: false
-        }));
+        req.send();
     }
 
-    function doReserve(ids, exp) {
+    function doReserve(ids) {
         var url = buildUrl("/recycling/execute", uid);
         
         var req = new XMLHttpRequest();
@@ -114,11 +78,8 @@
             var response = JSON.parse(req.responseText);
             
             exp += response.exp;
-            if (ids.length > 0) {
-                confirmReserve(ids, exp);
-            } else {
-                alert("Result:\nTotal EXP gained: " + exp + "\nVessels gained: " + (response.after_number - startCount));
-            }
+            endCount = response.after_number;
+            getList();
         };
         
         req.onerror = function() {
@@ -127,9 +88,9 @@
         
         req.send(JSON.stringify({
             special_token: null,
-            materials: ids.splice(0, 20),
+            materials: ids,
             possession_type: summons ? 2 : 1,
-            is_recommend: false
+            is_recommend: true
         }));
     }
 })();

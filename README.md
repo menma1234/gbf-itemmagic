@@ -23,9 +23,7 @@ For pulling from the event gacha, click the corresponding button. You *must* be 
 
 For moving angels, select either weapon or summon and the stash number, and then press the button. A dialog box will appear in the browser asking you to confirm.
 
-For feeding to ship, it simulates clicking the "Recommended" button. Please double check that your auto-select settings are correct before using it.
-
-For reserving, it will ignore anything that has a plus mark.
+For feeding to ship and reserving, it simulates clicking the "Recommended" button. Please double check that your auto-select settings are correct before using it.
 
 ## Important Notes
 
