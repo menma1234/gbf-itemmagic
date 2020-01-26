@@ -19,7 +19,7 @@ Open Developer Tools and switch to the GBF Item Magic panel.
 
 For selling weapons and summons, select the options and click sell. A dialog box will appear in the browser asking you to confirm.
 
-For pulling from the event gacha, click the corresponding button. You *must* be on the event page (or the gacha page for Guild Wars events) in order to use it. The script will stop once the SSR is pulled unless "Don't stop at SSR" is checked. The number of items pulled each time is dependent on your setting when you click the button (e.g. if you have it set to 100, then it will pull 100 at a time, if it's set to 50, it'll pull 50, etc.).
+For pulling from the event gacha, click the corresponding button. You *must* be on the event page (or the gacha page for Guild Wars events) in order to use it. The script will stop once the SSR is pulled unless "Don't stop at SSR" is checked. The number of items pulled each time is dependent on your setting when you click the button (e.g. if you have it set to 100, then it will pull 100 at a time, if it's set to 50, it'll pull 50, etc.). If "Don't stop at SSR" is checked and the bulk pull button is available, it'll use that instead.
 
 For moving angels, select either weapon or summon and the stash number, and then press the button. A dialog box will appear in the browser asking you to confirm.
 

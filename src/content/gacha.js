@@ -66,6 +66,20 @@
             });
         });
     }
+    
+    function doBulkPull(id) {
+        var url = buildUrl("/" + eventName + "/rest/gacha/bulk_play", uid);
+        
+        var req = new XMLHttpRequest();
+        req.open("POST", url);
+        
+        req.onload = function() {
+            contentAction(id);
+        };
+        
+        req.setRequestHeader("Content-Type", "application/json");
+        req.send(JSON.stringify({special_token: null, gacha_id: id}));
+    }
 
     function gacha(doc) {
         var gachaButtons = doc.getElementsByClassName("btn-medal");
@@ -101,6 +115,11 @@
         }
         
         var id = parseInt(single.getAttribute("data-id"));
+        if(empty && max === null && doc.getElementsByClassName("prt-bulk-blink").length) {
+            doBulkPull(id);
+            return;
+        }
+        
         var duplicateKey = single.getAttribute("data-duplicate-key");
         var count = 1;
         
