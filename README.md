@@ -7,7 +7,7 @@ There are currently five features that this extension provides:
 * A button to automatically pull from the event gacha
 * A button to move all angel weapons/summons from a stash to inventory. The main point of this feature is to have an easy way of moving all angels of one type from your presents to your inventory by using the built-in presents management.
 * A button to automatically feed to the ship from your inventory
-* A button to automatically reserve angels from your inventory
+* A button to automatically reserve weapons/summons from your inventory
 
 ## Installation
 
