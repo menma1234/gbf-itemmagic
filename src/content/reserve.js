@@ -14,8 +14,9 @@
         }
         
         summons = request.summons;
-        startCount = null;
-        endCount = null;
+        vesselId = summons ? 2 : 1;
+        startCount = {};
+        endCount = {};
         exp = 0;
         
         getUid(function(_uid) {
@@ -30,7 +31,7 @@
     });
 
     function getList() {
-        var url = buildUrl("/recycling/recommend_list/" + (summons ? "2" : "1"), uid);
+        var url = buildUrl("/recycling/recommend_list/" + vesselId, uid);
         
         var req = new XMLHttpRequest();
         req.open("GET", url);
@@ -41,20 +42,29 @@
             var response = JSON.parse(req.responseText);
             var list = response.recommend_list;
             
-            if (startCount === null) {
-                if (list === null) {
-                    alert("No matching angels found.");
+            if (Object.keys(startCount).length === 0) {
+                if (!list) {
+                    alert("No matching items found.");
+                    return;
                 }
                 
-                startCount = +response.recycling_item.before_number;
+                for (id in response.recycling_item.accumulate_exp_result) {
+                    startCount[id] = +response.recycling_item.accumulate_exp_result[id].before_number;
+                }
             }
             
-            if (list !== null) {
+            if (list) {
                 doReserve(list.map(function(e) {
                     return e.id;
                 }))
             } else {
-                alert("Result:\nTotal EXP gained: " + exp + "\nVessels gained: " + (endCount - startCount));
+                var message = "Result:\nTotal EXP gained: " + exp + "\nVessels gained: " + (endCount[vesselId] - startCount[vesselId]);
+                if (!summons) {
+                    message += "\nSSR Skill Points gained: " + (endCount[3] - startCount[3]);
+                    message += "\nSR Skill Points gained: " + (endCount[4] - startCount[4]);
+                    message += "\nR Skill Points gained: " + (endCount[5] - startCount[5]);
+                }
+                alert(message);
             }
         };
         
@@ -77,8 +87,10 @@
         req.onload = function() {
             var response = JSON.parse(req.responseText);
             
-            exp += response.exp;
-            endCount = response.after_number;
+            exp += response.accumulate_exp_result[vesselId].exp;
+            for (id in response.accumulate_exp_result) {
+                endCount[id] = response.accumulate_exp_result[id].after_number
+            }
             getList();
         };
         
@@ -89,7 +101,7 @@
         req.send(JSON.stringify({
             special_token: null,
             materials: ids,
-            possession_type: summons ? 2 : 1,
+            possession_type: vesselId,
             is_recommend: true
         }));
     }
