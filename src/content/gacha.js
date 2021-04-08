@@ -207,7 +207,7 @@
             var response = JSON.parse(req.responseText);
             if(!empty) {
                 for(var i = 0; i < response.result.length; i++) {
-                    if(response.result[i].reward_rare_val == 4) {
+                    if(response.result[i].reward_rare_val == 4 || response.result[i].rareitem_flg) {
                         if(!autoReset) {
                             alert("SSR pulled. You have " + getNumTickets(doc) + " tickets remaining.");
                         } else {
