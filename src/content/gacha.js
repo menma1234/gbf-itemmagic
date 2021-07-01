@@ -68,7 +68,7 @@
     }
     
     function doBulkPull(id) {
-        var url = buildUrl("/" + eventName + "/rest/gacha/bulk_play", uid);
+        var url = buildUrl(mungeRestUrl("/" + eventName + "/rest/gacha/bulk_play"), uid);
         
         var req = new XMLHttpRequest();
         req.open("POST", url);
@@ -79,6 +79,28 @@
         
         req.setRequestHeader("Content-Type", "application/json");
         req.send(JSON.stringify({special_token: null, gacha_id: id}));
+    }
+    
+    function mungeRestUrl(url) {
+        if (url.indexOf("rest") > -1 && url.indexOf("teamforce") > -1) {
+            var parts = url.split("/");
+            var restIndex, nameIndex;
+            
+            for (var i = 0; i < parts.length; i++) {
+                if (parts[i] === "rest") {
+                    restIndex = i;
+                } else if (parts[i].indexOf("teamforce") > -1) {
+                    nameIndex = i;
+                }
+            }
+            
+            parts[restIndex] = parts[nameIndex];
+            parts[nameIndex] = "rest";
+            
+            url = parts.join("/");
+        }
+        
+        return url;
     }
 
     function gacha(doc) {
@@ -131,7 +153,7 @@
             count = 1;
         }
         
-        var url = buildUrl("/" + eventName + "/rest/gacha/play", uid);
+        var url = buildUrl(mungeRestUrl("/" + eventName + "/rest/gacha/play"), uid);
         
         var req = new XMLHttpRequest();
         req.open("POST", url);
@@ -165,7 +187,7 @@
 
     function result1(eventId, seq) {
         seq++;
-        var url = buildUrl("/" + eventName + "/rest/gacha/result/" + eventId, uid, seq);
+        var url = buildUrl(mungeRestUrl("/" + eventName + "/rest/gacha/result/" + eventId), uid, seq);
         
         var req = new XMLHttpRequest();
         req.open("GET", url);
@@ -198,7 +220,7 @@
 
     function result2(eventId, seq, doc) {
         seq++;
-        var url = buildUrl("/" + eventName + "/rest/gacha/result/" + eventId, uid, seq);
+        var url = buildUrl(mungeRestUrl("/" + eventName + "/rest/gacha/result/" + eventId), uid, seq);
         
         var req = new XMLHttpRequest();
         req.open("GET", url);
@@ -255,7 +277,7 @@
         var boxId = parseInt(resetButton.getAttribute("data-box-id"));
         var duplicateKey = resetButton.getAttribute("data-duplicate-key");
         
-        var url = buildUrl("/" + eventName + "/rest/gacha/reset_box", uid);
+        var url = buildUrl(mungeRestUrl("/" + eventName + "/rest/gacha/reset_box"), uid);
         
         var req = new XMLHttpRequest();
         req.open("POST", url);
@@ -270,7 +292,7 @@
     
     function getGachaIndex(callback) {
         var url;
-        if(eventName.startsWith("teamraid")) {
+        if(eventName.startsWith("teamraid") || eventName.indexOf("teamforce") > -1) {
             url = buildUrl("/" + eventName + "/gacha/content/index", uid);
         } else {
             if(isEventEnded) {
