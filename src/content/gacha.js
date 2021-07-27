@@ -67,13 +67,16 @@
         });
     }
     
-    function doBulkPull(id) {
+    function doBulkPull(id, bulkPullCost) {
         var url = buildUrl(mungeRestUrl("/" + eventName + "/rest/gacha/bulk_play"), uid);
         
         var req = new XMLHttpRequest();
         req.open("POST", url);
         
         req.onload = function() {
+            if(max) {
+                max -= bulkPullCost;
+            }
             contentAction(id);
         };
         
@@ -137,8 +140,10 @@
         }
         
         var id = parseInt(single.getAttribute("data-id"));
-        if(empty && max === null && doc.getElementsByClassName("prt-bulk-blink").length) {
-            doBulkPull(id);
+        var bulkPullCost = getBulkPullTicketCost(doc);
+        var shouldBulkPull = doc.getElementsByClassName("prt-bulk-blink").length && (max === null || max >= bulkPullCost);
+        if(empty && shouldBulkPull) {
+            doBulkPull(id, bulkPullCost);
             return;
         }
         
@@ -265,6 +270,15 @@
         } else {
             return doc.getElementsByClassName("txt-current-point")[0].innerHTML;
         }
+    }
+    
+    function getBulkPullTicketCost(doc) {
+        var bulkCostDiv = doc.querySelector(".bulk .txt-medal-cost");
+        if(bulkCostDiv) {
+            return parseInt(doc.querySelector(".bulk .txt-medal-cost").textContent);
+        }
+        
+        return null;
     }
 
     function hasResetButton(doc) {
