@@ -1,5 +1,5 @@
 (function() {
-    var uid;
+    var uid, version;
     
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         if(!("action" in request) || request.action !== "ship") {
@@ -8,15 +8,21 @@
         
         getUid(function(uidResult) {
             uid = uidResult;
-            getRecommendedMaterial();
+            
+            getVersion(function(versionResult) {
+                version = versionResult;
+                getRecommendedMaterial();
+            })
         });
     });
 
     function getRecommendedMaterial() {
-        var url = buildUrl("/recommend/recommend_guildship_material/", uid);
+        var url = buildUrl("/recommend/recommend_guildship_material/guildship", uid);
         
         var req = new XMLHttpRequest();
         req.open("GET", url);
+        req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        req.setRequestHeader("X-VERSION", version);
         
         req.onload = function() {
             var data = JSON.parse(req.responseText);
@@ -37,6 +43,9 @@
         
         var req = new XMLHttpRequest();
         req.open("POST", url);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        req.setRequestHeader("X-VERSION", version);
         
         req.onload = function() {
             var data = JSON.parse(req.responseText);
@@ -57,6 +66,9 @@
         
         var req = new XMLHttpRequest();
         req.open("POST", url);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        req.setRequestHeader("X-VERSION", version);
         
         req.onload = function() {
             var data = JSON.parse(req.responseText);
