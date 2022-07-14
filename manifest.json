@@ -1,6 +1,6 @@
 {
     "name": "GBF Item Magic",
-    "version": "1.5.9",
+    "version": "1.5.10",
     "minimum_chrome_version": "40.0",
     "manifest_version": 2,
     "description": "Provides various tools for saving time in Granblue Fantasy when working with items.",
@@ -11,7 +11,7 @@
     },
     "content_scripts": [
         {
-            "matches": ["http://gbf.game.mbga.jp/*", "http://game.granbluefantasy.jp/*"],
+            "matches": ["*://gbf.game.mbga.jp/*", "*://game.granbluefantasy.jp/*"],
             "js": [
                 "src/content/common.js",
                 "src/content/sell.js",
@@ -27,8 +27,8 @@
         "chrome_style": true
     },
     "permissions": [
-        "http://gbf.game.mbga.jp/*",
-        "http://game.granbluefantasy.jp/*",
+        "*://gbf.game.mbga.jp/*",
+        "*://game.granbluefantasy.jp/*",
         "storage"
     ]
 }
