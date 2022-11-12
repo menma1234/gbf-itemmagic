@@ -121,7 +121,7 @@
         if(single.getAttribute("disable") === "true") {
             var tickets = getNumTickets(doc);
             
-            if(tickets > 1) {
+            if(tickets > 1 && doc.getElementsByClassName("btn-reset").length) {
                 if(!autoReset) {
                     alert("The box is empty. Please reset the box and try again.");
                 } else {
@@ -149,12 +149,13 @@
         
         var duplicateKey = single.getAttribute("data-duplicate-key");
         var count = 1;
+        var cost = getSinglePullTicketCost(doc);
         
         if(multi !== null) {
             count = multi.getAttribute("count");
         }
         
-        if(max !== null && max < count * 2) {
+        if(max !== null && max < count * cost) {
             count = 1;
         }
         
@@ -165,7 +166,7 @@
         
         req.onload = function() {
             if(max) {
-                max -= count * 2;
+                max -= count * cost;
             }
             contentAction(id);
         };
@@ -276,6 +277,15 @@
         var bulkCostDiv = doc.querySelector(".bulk .txt-medal-cost");
         if(bulkCostDiv) {
             return parseInt(doc.querySelector(".bulk .txt-medal-cost").textContent);
+        }
+        
+        return null;
+    }
+
+    function getSinglePullTicketCost(doc) {
+        var costDiv = doc.querySelector(".prt-medal-obtain:not(.multi) .txt-medal-cost");
+        if(costDiv) {
+            return parseInt(doc.querySelector(".prt-medal-obtain:not(.multi) .txt-medal-cost").textContent);
         }
         
         return null;
