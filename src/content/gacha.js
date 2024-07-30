@@ -9,11 +9,11 @@
     var version;
 
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-        if(!("action" in request) || request.action !== "gacha") {
+        if (!("action" in request) || request.action !== "gacha") {
             return;
         }
         
-        if(!("empty" in request) || !("numTickets" in request) || !("autoReset" in request)) {
+        if (!("empty" in request) || !("numTickets" in request) || !("autoReset" in request)) {
             return;
         }
         
@@ -22,26 +22,26 @@
         autoReset = request.autoReset;
         
         var hash = window.location.hash;
-        if(hash.length === 0 || !hash.startsWith("#event/")) {
+        if (hash.length === 0 || !hash.startsWith("#event/")) {
             alert("Please navigate to the event page first.");
             return;
         }
         
         eventName = hash.replace(/^#event\/(.*?)(\/.*?)?$/, "$1");
-        if(!eventName) {
+        if (!eventName) {
             alert("Invalid event page URL.");
             return;
         }
         
         isEventEnded = hash.indexOf("end") >= 0;
         
-        var gachaButtons = document.getElementsByClassName("btn-medal");
-        if(gachaButtons.length === 0) {
+        var gachaButtons = getGachaButtons(document);
+        if (gachaButtons.length === 0) {
             alert("Please navigate to the gacha page first.");
             return;
         }
         
-        if(!empty && autoReset && hasResetButton(document)) {
+        if (!empty && autoReset && hasResetButton(document)) {
             resetBox(document, doGetUid);
             return;
         }
@@ -107,7 +107,7 @@
     }
 
     function gacha(doc) {
-        var gachaButtons = doc.getElementsByClassName("btn-medal");
+        var gachaButtons = getGachaButtons(doc);
         var multi, single;
         
         if(gachaButtons.length === 2) {
@@ -233,13 +233,13 @@
         
         req.onload = function() {
             var response = JSON.parse(req.responseText);
-            if(!empty) {
-                for(var i = 0; i < response.result.length; i++) {
-                    if(response.result[i].reward_rare_val == 4 || response.result[i].rareitem_flg) {
-                        if(!autoReset) {
+            if (!empty) {
+                for (var i = 0; i < response.result.length; i++) {
+                    if (response.result[i].reward_rare_val == 4 || response.result[i].rareitem_flg) {
+                        if (!autoReset) {
                             alert("SSR pulled. You have " + getNumTickets(doc) + " tickets remaining.");
                         } else {
-                            if(hasResetButton(doc)) {
+                            if (hasResetButton(doc)) {
                                 resetBox(doc, gacha);
                             } else {
                                 alert("SSR pulled but can't reset. Please enable the option to not stop on SSR.");
@@ -250,9 +250,7 @@
                 }
             }
             
-            if(max === 0) {
-                var tickets = getNumTickets(doc);
-                
+            if (max === 0) {
                 alert("Complete. You have " + getNumTickets(doc) + " tickets remaining.");
                 return;
             }
@@ -264,19 +262,33 @@
         
         req.send();
     }
+    
+    function getGachaButtons(doc) {
+        var gachaButtons = doc.getElementsByClassName("btn-medal");
+        if (gachaButtons.length === 0) {
+            gachaButtons = doc.getElementsByClassName("btn-gacha");
+        }
+        
+        return gachaButtons;
+    }
 
     function getNumTickets(doc) {
-        if(doc.getElementsByClassName("txt-gacha-point").length > 0) {
-            return doc.getElementsByClassName("txt-gacha-point")[0].innerHTML;
-        } else {
-            return doc.getElementsByClassName("txt-current-point")[0].innerHTML;
+        var div = doc.querySelector(".txt-gacha-point");
+        if (!div) {
+            div = doc.querySelector(".txt-current-point");
         }
+        
+        return parseInt(div.textContent, 10);
     }
     
     function getBulkPullTicketCost(doc) {
         var bulkCostDiv = doc.querySelector(".bulk .txt-medal-cost");
-        if(bulkCostDiv) {
-            return parseInt(doc.querySelector(".bulk .txt-medal-cost").textContent);
+        if (!bulkCostDiv) {
+            bulkCostDiv = doc.querySelector(".bulk .txt-gacha-cost");
+        }
+        
+        if (bulkCostDiv) {
+            return parseInt(bulkCostDiv.textContent, 10);
         }
         
         return null;
@@ -284,8 +296,12 @@
 
     function getSinglePullTicketCost(doc) {
         var costDiv = doc.querySelector(".prt-medal-obtain:not(.multi) .txt-medal-cost");
-        if(costDiv) {
-            return parseInt(doc.querySelector(".prt-medal-obtain:not(.multi) .txt-medal-cost").textContent);
+        if (!costDiv) {
+            costDiv = doc.querySelector(".prt-gacha-obtain:not(.multi) .txt-gacha-cost");
+        }
+        
+        if (costDiv) {
+            return parseInt(costDiv.textContent, 10);
         }
         
         return null;
@@ -297,8 +313,8 @@
 
     function resetBox(doc, callback) {
         var resetButton = doc.getElementsByClassName("btn-reset")[0];
-        var gachaId = parseInt(resetButton.getAttribute("data-gacha-id"));
-        var boxId = parseInt(resetButton.getAttribute("data-box-id"));
+        var gachaId = parseInt(resetButton.getAttribute("data-gacha-id"), 10);
+        var boxId = parseInt(resetButton.getAttribute("data-box-id"), 10);
         var duplicateKey = resetButton.getAttribute("data-duplicate-key");
         
         var url = buildUrl(mungeRestUrl("/" + eventName + "/rest/gacha/reset_box"), uid);
@@ -316,10 +332,10 @@
     
     function getGachaIndex(callback) {
         var url;
-        if(eventName.startsWith("teamraid") || eventName.indexOf("teamforce") > -1) {
+        if (eventName.startsWith("teamraid") || eventName.indexOf("teamforce") > -1) {
             url = buildUrl("/" + eventName + "/gacha/content/index", uid);
         } else {
-            if(isEventEnded) {
+            if (isEventEnded) {
                 url = buildUrl("/" + eventName + "/end/content/newindex", uid);
             } else {
                 url = buildUrl("/" + eventName + "/top/content/newindex", uid);
