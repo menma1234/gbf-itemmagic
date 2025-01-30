@@ -67,8 +67,12 @@
         });
     }
     
-    function doBulkPull(id, bulkPullCost) {
-        var url = buildUrl(mungeRestUrl("/" + eventName + "/rest/gacha/bulk_play"), uid);
+    function doBulkPull(id, bulkPullCost, bulkDetails) {
+        var path = "/rest/gacha/bulk_play";
+        if (bulkDetails.attributes["data-box-fill"].value) {
+            path = "/rest/gacha/bulk_box_play";
+        }
+        var url = buildUrl(mungeRestUrl("/" + eventName + path), uid);
         
         var req = new XMLHttpRequest();
         req.open("POST", url);
@@ -110,7 +114,7 @@
         var gachaButtons = getGachaButtons(doc);
         var multi, single;
         
-        if(gachaButtons.length === 2) {
+        if (gachaButtons.length === 2) {
             multi = gachaButtons[0];
             single = gachaButtons[1];
         } else {
@@ -118,11 +122,11 @@
             single = gachaButtons[0];
         }
         
-        if(single.getAttribute("disable") === "true") {
+        if (single.getAttribute("disable") === "true") {
             var tickets = getNumTickets(doc);
             
-            if(tickets > 1 && doc.getElementsByClassName("btn-reset").length) {
-                if(!autoReset) {
+            if (tickets > 1 && doc.getElementsByClassName("btn-reset").length) {
+                if (!autoReset) {
                     alert("The box is empty. Please reset the box and try again.");
                 } else {
                     resetBox(doc, gacha);
@@ -134,28 +138,32 @@
             return;
         }
         
-        if(max !== null && max <= 0) {
+        if (max !== null && max <= 0) {
             alert("Complete. You have " + getNumTickets(doc) + " tickets remaining.");
             return;
         }
         
         var id = parseInt(single.getAttribute("data-id"));
-        var bulkPullCost = getBulkPullTicketCost(doc);
-        var shouldBulkPull = doc.getElementsByClassName("prt-bulk-blink").length && (max === null || max >= bulkPullCost);
-        if(empty && shouldBulkPull) {
-            doBulkPull(id, bulkPullCost);
-            return;
+        
+        var bulkDetails = doc.getElementById("js-btn-gacha-play-all");
+        if (bulkDetails) {
+            var bulkPullCost = parseInt(bulkDetails.attributes["data-consume"].value, 10);
+            var shouldBulkPull = bulkDetails.attributes["data-can-bulk-play"].value && (max === null || max >= bulkPullCost);
+            if (empty && shouldBulkPull) {
+                doBulkPull(id, bulkPullCost, bulkDetails);
+                return;
+            }
         }
         
         var duplicateKey = single.getAttribute("data-duplicate-key");
         var count = 1;
         var cost = getSinglePullTicketCost(doc);
         
-        if(multi !== null) {
+        if (multi !== null) {
             count = multi.getAttribute("count");
         }
         
-        if(max !== null && max < count * cost) {
+        if (max !== null && max < count * cost) {
             count = 1;
         }
         
@@ -165,7 +173,7 @@
         req.open("POST", url);
         
         req.onload = function() {
-            if(max) {
+            if (max) {
                 max -= count * cost;
             }
             contentAction(id);
@@ -279,19 +287,6 @@
         }
         
         return parseInt(div.textContent, 10);
-    }
-    
-    function getBulkPullTicketCost(doc) {
-        var bulkCostDiv = doc.querySelector(".bulk .txt-medal-cost");
-        if (!bulkCostDiv) {
-            bulkCostDiv = doc.querySelector(".bulk .txt-gacha-cost");
-        }
-        
-        if (bulkCostDiv) {
-            return parseInt(bulkCostDiv.textContent, 10);
-        }
-        
-        return null;
     }
 
     function getSinglePullTicketCost(doc) {
